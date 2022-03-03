@@ -41,6 +41,10 @@ const getCookie = (req, name, options = {}) => {
   return cookies[name]
 }
 
+const delCookie = (res, name, options = {}) => {
+  res.clearCookie(name)
+}
+
 module.exports = {
   cookieRouter,
   setCookie,

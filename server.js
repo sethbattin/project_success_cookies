@@ -1,28 +1,50 @@
 // start from https://expressjs.com/en/starter/hello-world.html
 
-const { cookieRouter, getCookie, setCookie } = require('./cookies.js')
+const { cookieRouter, delCookie, getCookie, setCookie } = require('./cookies.js')
 const express = require('express')
 const app = express()
 
 const { users, comments } = require('./database.js')
 
-const cookieNames = {
+const cookieVars = {
   name: 'ps-cookie-name',
-  pass: 'ps-cookie-password',
   acct: 'ps-cookie-id'
+  sess: 'ps-cookie-session'
 }
 
 // allow POSTing to ../name OR ../password OR ../message
 cookieRouter.post('/name', (req, res) => {
-  const whichCookie = req.params.name
   const { name } = req.body
-
-  res.cookie(cookieNames.name, name)
+  const cookieName = getCookie(cookieVars.name)
+  if (name !== cookieName) {
+    delCookie(cookieVars.name)
+    delCookie(cookieVars.acct)
+    delCookie(cookieVars.pass)
+  }
+  const user = users.getByName(name)
+  setCookie(res, cookieVars.name, name)
+  setCookie(res, cookieVars.acct, user.id)
+ 
+  res.cookie(cookieVars.name, name)
   res.redirect('/')
 })
 
 cookieRouter.post('/password', (req, res) => {
+  const { pass } = req.body
+  const name = getCookie(req, cookieVars.name)
+  const id = getCookie(req, cookieVars.acct)
 
+  const user = users.getByName(name)
+  if (!user.pass) {
+    user.pass = pass
+  } else if (user.pass !== pass) {
+    res.status(401, 'invalid password').end()
+    return;
+  }
+  const uniqueNumber = uuid()
+  user.session = uniqueNumber
+  users.save(user)
+  setCookie(res, cookieVars.sess, `${id}-${uniqueNumber}`)
   res.redirect('/')
 })
 
