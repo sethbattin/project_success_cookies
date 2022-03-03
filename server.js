@@ -8,7 +8,7 @@ const { users, comments } = require('./database.js')
 
 const cookieVars = {
   name: 'ps-cookie-name',
-  acct: 'ps-cookie-id'
+  acct: 'ps-cookie-id',
   sess: 'ps-cookie-session'
 }
 
@@ -17,9 +17,9 @@ cookieRouter.post('/name', (req, res) => {
   const { name } = req.body
   const cookieName = getCookie(cookieVars.name)
   if (name !== cookieName) {
-    delCookie(cookieVars.name)
-    delCookie(cookieVars.acct)
-    delCookie(cookieVars.pass)
+    delCookie(res, cookieVars.name)
+    delCookie(res, cookieVars.acct)
+    delCookie(res, cookieVars.pass)
   }
   const user = users.getByName(name)
   setCookie(res, cookieVars.name, name)

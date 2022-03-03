@@ -37,7 +37,7 @@ const setCookie = (res, name, value, options = {}) => {
 
 const getCookie = (req, name, options = {}) => {
   const { secret } = options
-  const cookies = secret ? req.signedCookies : req.cookies
+  const cookies = (secret ? req.signedCookies : req.cookies) || {}
   return cookies[name]
 }
 
@@ -49,4 +49,5 @@ module.exports = {
   cookieRouter,
   setCookie,
   getCookie,
+  delCookie,
 }
