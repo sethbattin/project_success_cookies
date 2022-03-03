@@ -32,8 +32,8 @@ To run this code:
 ```bash
 # npm is a program that handles Node.js libraries
 npm install
-3. ???
 ```
+3. ???
 4. run the server
 ```bash
 # npm can also run nodejs programs, like this web server
